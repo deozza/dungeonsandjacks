@@ -8,6 +8,7 @@ import type { Entity } from "$lib/ECS/entities";
 import GameLoop from "$lib/gameLoop/GameLoop";
 import { describe, expect, it } from "vitest";
 import CardMovementSystem from "./CardMovementSystem";
+import CardBuilder from "$lib/builders/CardBuilder/CardBuilder";
 
 describe('update', () => {
   const cases = [
@@ -77,30 +78,49 @@ describe('update', () => {
       sizeOfDiscardAfter: 1,
       testName: 'from discard to deck'
     },
+    {
+      moveFrom: undefined,
+      moveTo: DeckComponent,
+      sizeOfHandBefore: 0,
+      sizeOfDeckBefore: 0,
+      sizeOfDiscardBefore: 0,
+      sizeOfHandAfter: 0,
+      sizeOfDeckAfter: 1,
+      sizeOfDiscardAfter: 0,
+      testName: 'add to deck'
+    },
+    {
+      moveFrom: undefined,
+      moveTo: HandComponent,
+      sizeOfHandBefore: 0,
+      sizeOfDeckBefore: 0,
+      sizeOfDiscardBefore: 0,
+      sizeOfHandAfter: 1,
+      sizeOfDeckAfter: 0,
+      sizeOfDiscardAfter: 0,
+      testName: 'add to hand'
+    },
+    {
+      moveFrom: undefined,
+      moveTo: DiscardComponent,
+      sizeOfHandBefore: 0,
+      sizeOfDeckBefore: 0,
+      sizeOfDiscardBefore: 0,
+      sizeOfHandAfter: 0,
+      sizeOfDeckAfter: 0,
+      sizeOfDiscardAfter: 1,
+      testName: 'add to discard'
+    },
   ];
 
   cases.forEach(testCase => {
     const gameLoop: GameLoop = new GameLoop();
     gameLoop.addSystem(new CardMovementSystem());
-    const cardEntity: Entity = gameLoop.addEntity();
-    
-    const cardRankComponent: CardRankComponent = new CardRankComponent();
-    cardRankComponent.value = 10;
-    gameLoop.addComponentToEntity(cardRankComponent, cardEntity);
 
-    const cardSuitComponent: CardSuitComponent = new CardSuitComponent();
-    cardSuitComponent.suit = 'heart';
-    gameLoop.addComponentToEntity(cardSuitComponent, cardEntity);
-    
-    const cardEntity2: Entity = gameLoop.addEntity();
-    
-    const cardRankComponent2: CardRankComponent = new CardRankComponent();
-    cardRankComponent2.value = 2;
-    gameLoop.addComponentToEntity(cardRankComponent2, cardEntity2);
-
-    const cardSuitComponent2: CardSuitComponent = new CardSuitComponent();
-    cardSuitComponent2.suit = 'spade';
-    gameLoop.addComponentToEntity(cardSuitComponent2, cardEntity2);
+    const cardBuilder: CardBuilder = new CardBuilder();
+    cardBuilder.gameLoop = gameLoop;
+    const cardEntity: Entity = cardBuilder.build({cardRank: 1, cardSuit: 'spades'});
+    const cardEntity2: Entity = cardBuilder.build({cardRank: 10, cardSuit: 'hearts'});
 
     const playerEntity: Entity = gameLoop.addEntity();
 
@@ -125,7 +145,6 @@ describe('update', () => {
         discardComponent.cards.add(cardEntity);
         discardComponent.cards.add(cardEntity2);
       }
-
       
       expect(deckComponent.cards.size).toBe(testCase.sizeOfDeckBefore)
       expect(discardComponent.cards.size).toBe(testCase.sizeOfDiscardBefore)

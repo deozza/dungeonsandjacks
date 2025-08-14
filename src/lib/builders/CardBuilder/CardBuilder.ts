@@ -3,8 +3,13 @@ import CardSuitComponent from "$lib/ECS/components/CardSuitComponent";
 import type { Entity } from "$lib/ECS/entities";
 import AbstractBuilder from "../AbstractBuilder";
 
+type CardModel = {
+  cardRank: number,
+  cardSuit: string
+};
+
 export default class CardBuilder extends AbstractBuilder {
-  public build(values: {cardRank: number, cardSuit: string}): Entity {
+  public build(values: CardModel): Entity {
 
     if(this.gameLoop === undefined) {
       throw 'gameLoop must be instanciated before using a builder';
