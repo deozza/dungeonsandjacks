@@ -7,6 +7,12 @@ import CardSuitComponent from "$lib/ECS/components/CardSuitComponent";
 import type ComponentInterface from "$lib/ECS/components/ComponentInterface";
 
 describe('build', () => {
+  it('throws if no gameLoop', () => {
+    const cardBuilder: CardBuilder = new CardBuilder();
+
+    expect(() => cardBuilder.build({cardRank: 1, cardSuit: 'spade'})).toThrow();
+  });
+
   it('adds entity in gameLoop', () => {
     const gameLoop: GameLoop = new GameLoop();
 
