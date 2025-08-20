@@ -6,9 +6,16 @@ import AbstractSystem from "../AbstractSystem";
 
 export default class HealthSystem extends AbstractSystem {
     public requiredComponents: Set<Function> = new Set<Function>([HealthComponent]);
+    public listensOnEvents: Set<Function> = new Set<Function>([DamageComponent, HealComponent]);
+    public excludedComponents: Set<Function> = new Set<Function>([]);
     
     public update(entities: Set<Entity>): void {
       for(const entity of entities){
+
+        if(this.hasEvents(entity) === false) {
+          continue;
+        }
+        
         this.executeHealthVariation(entity);
       }
     }
@@ -20,11 +27,7 @@ export default class HealthSystem extends AbstractSystem {
       if(healthVariationComponent === undefined) {
         healthVariationComponent = this.gameLoop?.getComponentFromEntity(HealComponent, entity) as HealComponent;
       }
-
-      if(healthVariationComponent === undefined) {
-        return;
-      }
-    
+      
       if(healthVariationComponent instanceof DamageComponent){
         healthComponent.currentHealth = this.reduceHealth(healthVariationComponent, healthComponent);
         this.gameLoop?.removeComponentFromEntity(DamageComponent, entity);

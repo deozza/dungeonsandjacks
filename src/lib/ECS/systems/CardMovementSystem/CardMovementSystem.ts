@@ -7,10 +7,16 @@ import type { Entity } from "$lib/ECS/entities";
 import AbstractSystem from "../AbstractSystem";
 
 export default class CardMovementSystem extends AbstractSystem {
-    public requiredComponents: Set<Function> = new Set<Function>([HandComponent, DeckComponent, DiscardComponent, CardMovementComponent]);
+    public requiredComponents: Set<Function> = new Set<Function>([HandComponent, DeckComponent, DiscardComponent]);
+    public listensOnEvents: Set<Function> = new Set<Function>([CardMovementComponent]);
+    public excludedComponents: Set<Function> = new Set<Function>([]);
     
     public update(entities: Set<Entity>): void {
       for(const entity of entities) {
+        if(this.hasEvents(entity) === false) {
+          continue;
+        }
+        
         this.moveCard(entity);
       }
     }
