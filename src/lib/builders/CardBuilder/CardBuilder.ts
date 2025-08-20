@@ -9,6 +9,17 @@ type CardModel = {
 };
 
 export default class CardBuilder extends AbstractBuilder {
+
+  public static instance: CardBuilder | undefined = undefined;
+  
+  public getInstance(): CardBuilder {
+    if(CardBuilder.instance === undefined) {
+      CardBuilder.instance = new CardBuilder();
+    }
+
+    return CardBuilder.instance;
+  }
+  
   public build(values: CardModel): Entity {
 
     if(this.gameLoop === undefined) {

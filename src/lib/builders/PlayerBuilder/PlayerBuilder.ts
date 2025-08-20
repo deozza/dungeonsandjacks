@@ -29,6 +29,18 @@ type PlayerModel = {
 };
 
 export default class PlayerBuilder extends AbstractBuilder {
+
+    public static instance: PlayerBuilder | undefined = undefined;
+
+    public getInstance(): PlayerBuilder {
+      if(PlayerBuilder.instance === undefined) {
+        PlayerBuilder.instance = new PlayerBuilder();
+      }
+
+      return PlayerBuilder.instance;
+    }
+  
+  
     public build(values: PlayerModel): Entity {
       if(this.gameLoop === undefined) {
         throw 'gameLoop must be instanciated before using a builder';
