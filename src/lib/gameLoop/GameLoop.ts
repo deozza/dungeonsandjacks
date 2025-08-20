@@ -115,37 +115,60 @@ export default class GameLoop {
     return;
   }
 
-  public getSystemAndEntities(systemToFind: Function): [AbstractSystem, Set<Entity>] | undefined {
+  public getSystemAndEntities(systemToFind: Function): {system: AbstractSystem, entities: Set<Entity>} | undefined {
     for(const mapIterator of this.systems.entries()) {
       if(mapIterator[0].constructor === systemToFind) {
-        return mapIterator;
+        return {system: mapIterator[0], entities: mapIterator[1]};
       }
     }
 
     return undefined;
   }
 
+  public getDataFromSystem(systemToFind: Function): Map<Entity, Map<Function, ComponentInterface>> | undefined {
+    const system = this.getSystemAndEntities(systemToFind);
+
+    if(system === undefined) {
+      return undefined;
+    }
+
+    const dataFromSystem: Map<Entity, Map<Function, ComponentInterface>> = new Map<Entity, Map<Function, ComponentInterface>>([]);
+
+    for(const entity of system.entities) {
+      dataFromSystem.set(entity, this.getComponentsFromEntity(entity)!);
+    }
+
+    return dataFromSystem;    
+  }
+
   public removeSystem(systemToRemove: Function): void {
 
-    const system: [AbstractSystem, Set<Entity>] | undefined = this.getSystemAndEntities(systemToRemove);
+    const system: {system: AbstractSystem, entities: Set<Entity>} | undefined = this.getSystemAndEntities(systemToRemove);
     if(system === undefined) {
       return;
     }
 
-    this.systems.delete(system[0]);
+    this.systems.delete(system.system);
 
     return;
   }
 
   private manageEntityForSystems(entity: Entity): void {
     for (const system of this.systems.keys()) {
-      if (this.entityHasAllComponents(entity, system.requiredComponents)) {
-        if(!this.systems.get(system)?.has(entity)) {
-            this.systems.get(system)?.add(entity);
-        }
-      } else {
+      if(this.entityHasAllComponents(entity, system.requiredComponents) === false) {
         this.systems.get(system)?.delete(entity);
+        continue;
       }
+
+      if(system.shouldIgnoreEntity(entity) === true) {
+        continue;
+      }
+
+      if(this.systems.get(system)?.has(entity) === true) {
+        continue;
+      }
+      
+      this.systems.get(system)?.add(entity);
     }
   }
   
@@ -158,4 +181,5 @@ export default class GameLoop {
 
     return;
   }
+
 }
