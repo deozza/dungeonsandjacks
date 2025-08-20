@@ -13,6 +13,8 @@ class DummySystem extends AbstractSystem {
         
     }
     public requiredComponents: Set<Function> = new Set<Function>([DummyComponent]);
+    public excludedComponents: Set<Function> = new Set<Function>([]);
+    public listensOnEvents: Set<Function> = new Set<Function>([]);
     constructor() {
         super();
     }
@@ -24,6 +26,8 @@ class DummySystem2 extends AbstractSystem {
         
     }
     public requiredComponents: Set<Function> = new Set<Function>([DummyComponent]);
+    public excludedComponents: Set<Function> = new Set<Function>([]);
+    public listensOnEvents: Set<Function> = new Set<Function>([]);
     constructor() {
         super();
     }
@@ -359,7 +363,7 @@ describe('getSystemAndEntities', () => {
     ]);
 
     expect(gameLoop.getSystemAndEntities(DummySystem)).toEqual(
-      [dummySystem, new Set<Entity>([0, 1, 2])]
+      {system: dummySystem, entities: new Set<Entity>([0, 1, 2])}
     );
   });
 });
