@@ -1,4 +1,28 @@
-export function renderSplash(ctx) {
-  ctx.font = "50px Arial";
-  ctx.fillText("Hello World",10,80);
+import GameStateMachine from "$lib/stateMachines/GameStateMachine/GameStateMachine";
+import IdleState from "$lib/stateMachines/states/GameStateMachine/Idle/IdleState";
+import AbstractScene from "./AbstractScene";
+import type SceneInterface from "./SceneInterface";
+
+export default class SplashScreen extends AbstractScene implements SceneInterface {
+    protected constraints: Map<Function, Function> = new Map<Function, Function>([
+      [GameStateMachine, IdleState]
+    ]);
+
+    
+    public constraintsAreRespected(): boolean {
+
+      for(const constraint of this.constraints.entries()) {
+        if(this.world?.stateMachines.has(constraint[0]) === false) {
+          return false;
+        }
+        
+        if(this.world?.stateMachines.get(constraint[0])?.currentState.constructor !== constraint[1]) {
+          return false;
+        }
+        
+      }
+      
+      return true;
+    }
+  
 }
