@@ -1,6 +1,8 @@
 import GameLoop from "./gameLoop/GameLoop";
 import AbstractScene from "./scenes/AbstractScene";
 import MainMenuScreen from "./scenes/MainMenuScreen";
+import PauseScreen from "./scenes/PauseScreen";
+import PlayScreen from "./scenes/PlayScreen";
 import SplashScreen from "./scenes/SplashScreen";
 import AbstractStateMachine from "./stateMachines/AbstractStateMachine/AbstractStateMachine";
 import GameStateMachine from "./stateMachines/GameStateMachine/GameStateMachine";
@@ -73,9 +75,17 @@ export default class World {
     
     const mainMenuScreen = new MainMenuScreen();
     mainMenuScreen.setWorld(this);
+    
+    const playScreen = new PlayScreen();
+    playScreen.setWorld(this);
+    
+    const pauseScreen = new PauseScreen();
+    pauseScreen.setWorld(this);
 
     this.#scenes.add(splashScreen);
     this.#scenes.add(mainMenuScreen);
+    this.#scenes.add(playScreen);
+    this.#scenes.add(pauseScreen);
   }
 
   private loadStateMachines(): void {

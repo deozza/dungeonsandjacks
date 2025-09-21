@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PlayEvent from "$lib/stateMachines/events/PlayEvent";
+	import PauseEvent from "$lib/stateMachines/events/PauseEvent";
 	import type World from "$lib/World";
 
   interface Props {
@@ -9,10 +9,10 @@
   let { world }: Props = $props();
 
 	function handleClick(){
-		world.listensToEvent(PlayEvent)
+		world.listensToEvent(PauseEvent)
 	}
   
 </script>
 
-<h1 class="h1">Main menu</h1>
-<button on:click={handleClick}>Play</button>
+<h1 class="h1">Playing</h1>
+<button on:click={handleClick}>Pause</button>

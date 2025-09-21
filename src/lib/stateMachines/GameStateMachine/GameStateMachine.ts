@@ -29,10 +29,10 @@ export default class GameStateMachine extends AbstractStateMachine {
       ])],
       [PausedState, new Map<Function, AbstractState>([
         [ContinueEvent, new PlayingState()],
-        [QuitEvent, new QuitState],
+        [QuitEvent, new MainMenuState()],
       ])],
       [LostState, new Map<Function, AbstractState>([
-        [ContinueEvent, new MainMenuState],
+        [ContinueEvent, new MainMenuState()],
       ])],
       [QuitState, new Map<Function, AbstractState>()],
     ]);

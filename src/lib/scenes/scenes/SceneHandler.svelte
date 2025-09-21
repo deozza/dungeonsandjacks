@@ -4,6 +4,10 @@
 	import MainMenuScreen from "../MainMenuScreen";
 	import SplashScreenUI from "./SplashScreenUI.svelte";
 	import MainMenuScreenUI from "./MainMenuScreenUI.svelte";
+	import PauseScreen from "../PauseScreen";
+	import PlayScreen from "../PlayScreen";
+	import PlayScreenUI from "./PlayScreenUI.svelte";
+	import PauseScreenUI from "./PauseScreenUI.svelte";
 	import { fade } from "svelte/transition";
 
   interface Props {
@@ -15,6 +19,8 @@
   const options = [
     {scene: SplashScreen, component: SplashScreenUI},
     {scene: MainMenuScreen, component: MainMenuScreenUI},
+    {scene: PlayScreen, component: PlayScreenUI},
+    {scene: PauseScreen, component: PauseScreenUI},
   ]
 
 
