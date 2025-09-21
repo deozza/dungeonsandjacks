@@ -1,28 +1,27 @@
 <script lang="ts">
-  import GameLoop from '$lib/gameLoop/GameLoop';
-  import SceneSystem from '$lib/ECS/systems/SceneSystem/SceneSystem';
-  import InputSystem from '$lib/ECS/systems/InputSystem/InputSystem';
-  import SceneComponent from '$lib/ECS/components/SceneComponent';
-  import StateComponent from '$lib/ECS/components/StateComponent';
-  import type Entity from '$lib/ECS/entities/index';
+	import SceneHandler from '$lib/scenes/scenes/SceneHandler.svelte';
+	import ContinueEvent from '$lib/stateMachines/events/ContinueEvent';
+	import World from '$lib/World';
 	import { onMount } from 'svelte';
-  
-  const gameLoop: GameLoop = new GameLoop()
-  gameLoop.addSystem(new InputSystem());
-  gameLoop.addSystem(new SceneSystem());
 
-  const sceneEntity: Entity = gameLoop.addEntity();
-  gameLoop.addComponentToEntity(new SceneComponent(), sceneEntity);
+	let world = new World();
+	
+  let count = 0; 
   
-  const stateEntity: Entity = gameLoop.addEntity();
-  gameLoop.addComponentToEntity(new StateComponent(), stateEntity);
-
   onMount(() =>  {
+  	world.load();
     requestAnimationFrame(update);
   })
   
   function update() {
-    gameLoop.update()
+    if(count === 120) {
+      world.listensToEvent(ContinueEvent)
+    }
+
+    world.update()
+    world = world;
+    count++;
+    
 		requestAnimationFrame(update);
   }
   
@@ -33,6 +32,7 @@
 
 <div class="flex flex-row justify-center align-center items-center w-full h-screen">
   <div class="flex flex-row justify-center align-center items-center h-[80vh] w-10/12 bg-white">
+    <SceneHandler {world} />
   </div>
 </div>
 
