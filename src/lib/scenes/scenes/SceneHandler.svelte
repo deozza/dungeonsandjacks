@@ -4,6 +4,7 @@
 	import MainMenuScreen from "../MainMenuScreen";
 	import SplashScreenUI from "./SplashScreenUI.svelte";
 	import MainMenuScreenUI from "./MainMenuScreenUI.svelte";
+	import { fade } from "svelte/transition";
 
   interface Props {
     world: World
@@ -31,5 +32,9 @@
 </script>
 
 {#if world.currentScreen !== undefined}
-  <selected.component {world} />
+  {#key selected}
+    <div in:fade>
+      <selected.component {world} />
+    </div>
+  {/key}
 {/if}
