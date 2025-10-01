@@ -1,12 +1,9 @@
 <script lang="ts">
-	import SceneHandler from '$lib/scenes/scenes/SceneHandler.svelte';
-	import ContinueEvent from '$lib/stateMachines/events/ContinueEvent';
+	import SceneHandler from '$lib/scenes/UI/SceneHandler.svelte';
 	import World from '$lib/World';
 	import { onMount } from 'svelte';
 
 	let world = new World();
-	
-  let count = 0; 
   
   onMount(() =>  {
   	world.load();
@@ -14,15 +11,9 @@
   })
   
   function update() {
-    if(count === 120) {
-      world.listensToEvent(ContinueEvent)
-    }
-
     world.update()
     world = world;
-    count++;
-    
-		requestAnimationFrame(update);
+    requestAnimationFrame(update);
   }
   
   function onKeyUp(e) {

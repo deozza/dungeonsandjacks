@@ -1,11 +1,13 @@
+import CurrentStateComponent from "./ECS/components/CurrentStateComponent";
+import LoadedScenesComponent from "./ECS/components/LoadedScenesComponent";
+import SceneComponent from "./ECS/components/SceneComponent";
+import StateMachineComponent from "./ECS/components/StateMachineComponent";
+import type { Entity } from "./ECS/entities";
+import SceneSystem from "./ECS/systems/SceneSystem/SceneSystem";
+import StateMachineSystem from "./ECS/systems/StateMachineSystem/StateMachineSystem";
 import GameLoop from "./gameLoop/GameLoop";
-import AbstractScene from "./scenes/AbstractScene";
-import MainMenuScreen from "./scenes/MainMenuScreen";
-import PauseScreen from "./scenes/PauseScreen";
-import PlayScreen from "./scenes/PlayScreen";
-import SplashScreen from "./scenes/SplashScreen";
-import AbstractStateMachine from "./stateMachines/AbstractStateMachine/AbstractStateMachine";
-import GameStateMachine from "./stateMachines/GameStateMachine/GameStateMachine";
+import { characterSelectSceneConstraints, mainMenuSceneConstraints, pauseSceneConstraints, playSceneConstraints, splashSceneConstraints } from "./scenes";
+import { gameStateMachine, runStateMachine } from "./stateMachines/stateMachines";
 
 export default class World {
   #gameLoop: GameLoop | undefined = undefined;
@@ -14,91 +16,50 @@ export default class World {
     return this.#gameLoop;
   }
   
-  #stateMachines: Map<Function, AbstractStateMachine> = new Map<Function, AbstractStateMachine>([]);
-
-  public get stateMachines(): Map<Function, AbstractStateMachine>{
-    return this.#stateMachines;
-  }
-
-  private addStateMachine(stateMachine: AbstractStateMachine): World {
-    this.#stateMachines.set(stateMachine.constructor, stateMachine);
-    return this;
-  }
-
-  #scenes: Set<AbstractScene> = new Set<AbstractScene>([])
-  
-  #currentScene: AbstractScene | undefined = undefined;
-
-  public get currentScreen() {
-    return this.#currentScene;
-  }
-
-  private set currentScreen(screen) {
-    this.#currentScene = screen;
-  }
-
   public update(): void {
     if(this.#gameLoop === undefined) {
       throw "Game not loaded";
     }
 
     this.#gameLoop.update();
-    this.updateCurrentScene();
-  }
-
-  public listensToEvent(event: Function): void {
-
-    this.#stateMachines.forEach((stateMachine) => {
-      stateMachine.listensToEvent(event);
-    })
-  }
-
-  private updateCurrentScene(): void {
-    this.#scenes.forEach((scene: AbstractScene) => {
-
-      scene.displayed = scene.constraintsAreRespected();
-      
-      if(scene.displayed === true && scene !== this.currentScreen) {
-        this.currentScreen = scene;
-      }
-      
-    });
-  }
-
-  private loadScenes(): void {
-    if(this.#scenes.size !== 0) {
-      return;
-    }
-
-    const splashScreen = new SplashScreen();
-    splashScreen.setWorld(this);
-    
-    const mainMenuScreen = new MainMenuScreen();
-    mainMenuScreen.setWorld(this);
-    
-    const playScreen = new PlayScreen();
-    playScreen.setWorld(this);
-    
-    const pauseScreen = new PauseScreen();
-    pauseScreen.setWorld(this);
-
-    this.#scenes.add(splashScreen);
-    this.#scenes.add(mainMenuScreen);
-    this.#scenes.add(playScreen);
-    this.#scenes.add(pauseScreen);
   }
 
   private loadStateMachines(): void {
-    if(this.#stateMachines.size !== 0) {
-      return;
-    }
+    this.gameLoop?.addSystem(new StateMachineSystem());
 
-    this.addStateMachine(GameStateMachine.instance as GameStateMachine);
+    const gameStateMachineEntity: Entity = this.gameLoop!.addEntity();
+
+    this.gameLoop?.addComponentToEntity(new StateMachineComponent(gameStateMachine), gameStateMachineEntity);
+    this.gameLoop?.addComponentToEntity(new CurrentStateComponent('Idle'), gameStateMachineEntity);
+    
+    const runStateMachineEntity: Entity = this.gameLoop!.addEntity();
+
+    this.gameLoop?.addComponentToEntity(new StateMachineComponent(runStateMachine), runStateMachineEntity);
+    this.gameLoop?.addComponentToEntity(new CurrentStateComponent('Idle'), runStateMachineEntity);
+  }
+
+  private loadScenes(): void {
+    this.gameLoop?.addSystem(new SceneSystem());
+
+    const sceneEntity: Entity = this.gameLoop!.addEntity();
+
+    this.gameLoop?.addComponentToEntity(new SceneComponent(), sceneEntity);
+
+    const loadedScenesComponent: LoadedScenesComponent = new LoadedScenesComponent();
+    loadedScenesComponent.scenes = new Map([
+      [splashSceneConstraints, 'Splash'],
+      [mainMenuSceneConstraints, 'MainMenu'],
+      [characterSelectSceneConstraints, 'CharacterSelect'],
+      [playSceneConstraints, 'Play'],
+      [pauseSceneConstraints, 'Pause']
+    ]);
+
+    this.gameLoop?.addComponentToEntity(loadedScenesComponent, sceneEntity);
   }
 
   public load(): void {
-    this.loadScenes();
-    this.loadStateMachines();
     this.#gameLoop = new GameLoop();
+    this.loadStateMachines();
+    this.loadScenes();
   }
 }

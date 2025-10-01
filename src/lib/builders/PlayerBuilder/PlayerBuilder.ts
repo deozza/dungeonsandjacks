@@ -21,7 +21,7 @@ type PlayerModel = {
   DeckComponent: {
     cards: {
       hearts: number[],
-      aces: number[],
+      spades: number[],
       diamonds: number[],
       clubs: number[],
     }

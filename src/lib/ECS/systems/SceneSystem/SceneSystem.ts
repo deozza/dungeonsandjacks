@@ -1,55 +1,80 @@
+import CurrentStateComponent from "$lib/ECS/components/CurrentStateComponent";
+import LoadedScenesComponent from "$lib/ECS/components/LoadedScenesComponent";
 import SceneComponent from "$lib/ECS/components/SceneComponent";
-import StateComponent from "$lib/ECS/components/StateComponent";
+import StateMachineComponent from "$lib/ECS/components/StateMachineComponent";
 import type { Entity } from "$lib/ECS/entities";
+import type { Scene, SceneConstraints } from "$lib/scenes";
+import type { StateMachine } from "$lib/stateMachines/stateMachines";
+import type { State } from "$lib/stateMachines/states";
 import AbstractSystem from "../AbstractSystem";
 
 export default class SceneSystem extends AbstractSystem {
-    public requiredComponents: Set<Function> = new Set<Function>([SceneComponent]);
+  public listensOnEvents: Set<Function> = new Set<Function>([]);
+  public excludedComponents: Set<Function> = new Set<Function>([]);
+  public requiredComponents: Set<Function> = new Set<Function>([CurrentStateComponent, StateMachineComponent]);
+  
+  public update(entities: Set<Entity>): void {
+    const sceneEntity: Entity = this.getSceneEntity();
+    const loadedScenes: LoadedScenesComponent = this.getLoadedScenes(sceneEntity);
+
+    const currentScene: SceneComponent = this.getCurrentScene(sceneEntity);
+    const stateMachines: Map<StateMachine, State> = this.getStateMachines(entities);
     
-    public update(entities: Set<Entity>): void {
-        const stateEntity: Entity[] | undefined = this.gameLoop?.getEntitiesByComponents(new Set<Function>([StateComponent]));
-        if(stateEntity === undefined || stateEntity.length <= 0) {
-          return;
-        }
+    loadedScenes.scenes.forEach((scene: Scene, sceneConstraints: SceneConstraints) => {
+      if(this.checkConstraintsOfSceneAreRespected(sceneConstraints, stateMachines) === true && currentScene.currentScene !== scene) {
+        currentScene.currentScene = scene;
+      }
+    });
+  }
 
-        const stateComponent: StateComponent = this.gameLoop?.getComponentFromEntity(StateComponent, stateEntity[0]) as StateComponent;
+  private getStateMachines(entities: Set<Entity>): Map<StateMachine, State> {
+    const stateMachines: Map<StateMachine, State> = new Map<StateMachine, State>([]);
+    entities.forEach((entity: Entity) => {
+      stateMachines.set(this.getStateMachinesComponent(entity).stateMachine, this.getCurrentStateComponent(entity).currentState);
+    })
 
-        let sceneComponent: undefined | SceneComponent;
+    return stateMachines;
+  }
 
-        for(const entity of entities) {
-          sceneComponent = this.updateScene(entity, stateComponent)
-        }
+  private getStateMachinesComponent(entity: Entity): StateMachineComponent {
+    return this.gameLoop?.getComponentFromEntity(StateMachineComponent, entity) as StateMachineComponent;
+  }
 
-        if(sceneComponent === undefined){
-          return;
-        }
+  private getCurrentStateComponent(entity: Entity): CurrentStateComponent {
+    return this.gameLoop?.getComponentFromEntity(CurrentStateComponent, entity) as CurrentStateComponent;
+  }
 
-        this.renderScene(sceneComponent);
-    }
-
-    private updateScene(entity: Entity, stateComponent: StateComponent): SceneComponent | undefined {
-      if(stateComponent.newState === undefined || stateComponent.newState === stateComponent.currentState) {
-        return undefined;
+  private checkConstraintsOfSceneAreRespected(sceneConstraints: SceneConstraints, stateMachines: Map<StateMachine, State>): boolean {
+    for(let [stateMachine, state] of sceneConstraints) {
+      if(stateMachines.has(stateMachine) === false) {
+        return false;
       }
 
-      const sceneComponent: SceneComponent = this.gameLoop?.getComponentFromEntity(SceneComponent, entity) as SceneComponent;
-
-      switch(stateComponent.newState) {
-        case 'SPLASH_SCREEN':
-          sceneComponent.currentScene = 'SPLASH';
-          break;
-        case 'MAIN_MENU':
-          sceneComponent.currentScene = 'MAIN_MENU';
-          break;
-        default: break;          
+      if(stateMachines.get(stateMachine) !== state) {
+        return false;
       }
-
-      stateComponent.currentState = stateComponent.newState;
-      stateComponent.newState = undefined;
-
-      return sceneComponent;
     }
 
-    private renderScene(sceneComponent: SceneComponent): void {
+    return true;
+  }
+
+  private getSceneEntity(): Entity {
+    const entities: Entity[] = this.gameLoop?.getEntitiesByComponents(new Set([SceneComponent, LoadedScenesComponent])) as Entity[];
+
+    if(entities.length !== 1) {
+      throw 'No entities found';
     }
+
+    return entities[0];
+  }
+
+  private getCurrentScene(entity: Entity): SceneComponent {
+    return this.gameLoop?.getComponentFromEntity(SceneComponent, entity) as SceneComponent;
+  }
+
+  private getLoadedScenes(entity: Entity): LoadedScenesComponent {
+    return this.gameLoop?.getComponentFromEntity(LoadedScenesComponent , entity) as LoadedScenesComponent ;
+    
+  }
+
 }

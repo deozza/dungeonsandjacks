@@ -8,8 +8,6 @@ import DeckComponent from "$lib/ECS/components/DeckComponent";
 import HealthComponent from "$lib/ECS/components/HealthComponent";
 import DescriptionComponent from "$lib/ECS/components/DescriptionComponent";
 import NameComponent from "$lib/ECS/components/NameComponent";
-import CardRankComponent from "$lib/ECS/components/CardRankComponent";
-import CardSuitComponent from "$lib/ECS/components/CardSuitComponent";
 
 const values = {
   NameComponent: {
@@ -24,7 +22,7 @@ const values = {
   DeckComponent: {
     cards: {
       hearts: [1],
-      aces: [1],
+      spades: [1],
       diamonds: [1],
       clubs: [1],
     }
