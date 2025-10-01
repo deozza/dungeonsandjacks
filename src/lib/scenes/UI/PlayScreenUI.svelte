@@ -22,4 +22,4 @@
 
 <h1 class="h1">Playing</h1>
 <p>{getPlayerInfos().content}</p>
-<button on:click={handleClick}>Pause</button>
+<button onclick={handleClick}>Pause</button>

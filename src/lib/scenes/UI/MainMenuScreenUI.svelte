@@ -16,4 +16,4 @@
 </script>
 
 <h1 class="h1">Main menu</h1>
-<button on:click={handleClick}>Play</button>
+<button onclick={handleClick}>Play</button>

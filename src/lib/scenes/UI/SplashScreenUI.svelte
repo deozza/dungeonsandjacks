@@ -30,5 +30,5 @@
 
 <h1 class="h1">Splash screen</h1>
 {#if count >= 120}
-	<button on:click={() => handleClick()} in:fade>Continue</button>
+	<button onclick={() => handleClick()} in:fade>Continue</button>
 {/if}

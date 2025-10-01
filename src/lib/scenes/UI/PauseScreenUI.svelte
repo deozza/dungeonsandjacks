@@ -22,5 +22,5 @@
 </script>
 
 <h1 class="h1">Pause</h1>
-<button on:click={() => handleClick('ContinueEvent')}>Continue</button>
-<button on:click={() => handleClick('QuitEvent')}>Menu</button>
+<button onclick={() => handleClick('ContinueEvent')}>Continue</button>
+<button onclick={() => handleClick('QuitEvent')}>Menu</button>

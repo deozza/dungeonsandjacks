@@ -27,8 +27,8 @@
 <div class="w-full h-full flex flex-col items-center justify-between">
 	<h1 class="h1 mt-4">Select your character</h1>
 	<div class="flex flex-row items-center justify-center space-x-4">
-		<button on:click={() => handleClick(villager)}>Villager</button>
-		<button on:click={() => handleClick(paladin)}>Paladin</button>
-		<button on:click={() => handleClick(mage)}>Mage</button>
+		<button onclick={() => handleClick(villager)}>Villager</button>
+		<button onclick={() => handleClick(paladin)}>Paladin</button>
+		<button onclick={() => handleClick(mage)}>Mage</button>
 	</div>
 </div>
