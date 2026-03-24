@@ -22,7 +22,7 @@
 </script>
 
 <div class="flex flex-row justify-center align-center items-center w-full h-screen">
-  <div class="flex flex-row justify-center align-center items-center h-[80vh] w-10/12 bg-white">
+  <div class="flex flex-row justify-center align-center items-center h-[80vh] w-10/12 bg-surface-500">
     <SceneHandler {world} />
   </div>
 </div>
