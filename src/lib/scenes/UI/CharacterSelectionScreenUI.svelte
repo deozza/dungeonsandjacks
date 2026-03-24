@@ -1,10 +1,9 @@
 <script lang="ts">
-	import PlayerBuilder from "$lib/builders/PlayerBuilder/PlayerBuilder";
 	import SendEventToStateMachineCommand from '$lib/commands/SendEventToStateMachinesCommand'
 	import type World from "$lib/World";
-	import villager from "$lib/configs/characters/playables/villager.json"
-	import paladin from "$lib/configs/characters/playables/paladin.json"
-	import mage from "$lib/configs/characters/playables/mage.json"
+	import { characters } from '$lib/configs/characters/playables/index';
+	import CharacterSheet from "$lib/UI/CharacterSheet.svelte";
+	import PlayerBuilder from '$lib/builders/CharacterBuilder/PlayerBuilder';
 
   interface Props {
     world: World
@@ -24,11 +23,13 @@
   
 </script>
 
-<div class="w-full h-full flex flex-col items-center justify-between">
+<div class="w-full h-full flex flex-col items-center">
 	<h1 class="h1 mt-4">Select your character</h1>
-	<div class="flex flex-row items-center justify-center space-x-4">
-		<button onclick={() => handleClick(villager)}>Villager</button>
-		<button onclick={() => handleClick(paladin)}>Paladin</button>
-		<button onclick={() => handleClick(mage)}>Mage</button>
+	<div class="flex flex-col items-center justify-center h-full w-full">
+		<div class="flex flex-row items-center justify-center space-x-4 h-96 w-full">
+			{#each characters as character}
+				<CharacterSheet {character} onclick={() => handleClick(character)} />
+			{/each}
+		</div>
 	</div>
 </div>

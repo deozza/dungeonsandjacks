@@ -1,6 +1,4 @@
 import CardMovementComponent from "$lib/ECS/components/CardMovementComponent";
-import CardRankComponent from "$lib/ECS/components/CardRankComponent";
-import CardSuitComponent from "$lib/ECS/components/CardSuitComponent";
 import DeckComponent from "$lib/ECS/components/DeckComponent";
 import DiscardComponent from "$lib/ECS/components/DiscardComponent";
 import HandComponent from "$lib/ECS/components/HandComponent";

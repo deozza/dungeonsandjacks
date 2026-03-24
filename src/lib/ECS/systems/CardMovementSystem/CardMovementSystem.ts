@@ -32,7 +32,7 @@ export default class CardMovementSystem extends AbstractSystem {
         this.addCard(cardMovementComponent, entity);
       }
 
-      this.gameLoop?.removeComponentFromEntity(CardMovementComponent, entity);
+      this.gameLoop?.setComponentOfEntityForRemoval(CardMovementComponent, entity);
     }
 
     private removeCard(cardMovementComponent: CardMovementComponent, entity: Entity): void {

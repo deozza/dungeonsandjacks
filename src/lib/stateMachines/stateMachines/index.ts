@@ -13,6 +13,7 @@ export const gameStateMachine: StateMachine = new Map<State, Map<StateMachineEve
   ])],
   ['Playing', new Map<StateMachineEvent, State>([
     ['PauseEvent', 'Paused'],
+    ['LostEvent', 'Lost']
   ])],
   ['Paused', new Map<StateMachineEvent, State>([
     ["ContinueEvent", 'Playing'],
@@ -49,4 +50,28 @@ export const runStateMachine: StateMachine = new Map<State, Map<StateMachineEven
     ['ContinueEvent', 'Playing'],
   ])],
   
+]);
+
+export const roundStateMachine: StateMachine = new Map<State, Map<StateMachineEvent, State>>([
+  ['Idle', new Map<StateMachineEvent, State>([
+    ['PrepareRoundEvent', 'Loading'],
+  ])],
+  ['Loading', new Map<StateMachineEvent, State>([
+    ['PlayEvent', 'Playing'],
+  ])],
+  ['Playing', new Map<StateMachineEvent, State>([
+    ['LostEvent', 'Lost'],
+    ['FightEvent', 'Fighting'],
+  ])],
+  ['Fighting', new Map<StateMachineEvent, State>([
+    ['ContinueEvent', 'Playing'],
+    ['WonEvent', 'Won'],
+    ['LostEvent', 'Lost'],
+  ])],
+  ['Won', new Map<StateMachineEvent, State>([
+    ['ContinueEvent', 'Idle'],
+  ])],
+  ['Lost', new Map<StateMachineEvent, State>([
+    ['ContinueEvent', 'Idle'],
+  ])],
 ]);

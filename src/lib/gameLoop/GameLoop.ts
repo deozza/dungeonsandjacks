@@ -6,20 +6,14 @@ export default class GameLoop {
   private readonly entities: Map<Entity, Map<Function, ComponentInterface>> = new Map([]);
   private readonly entitiesToRemove: Array<Entity> = [];
   private readonly systems: Map<AbstractSystem, Set<Entity>> = new Map([]);
+  private readonly componentsToRemoveFromEntities: Map<Entity, Set<Function>> = new Map([]);
   
   private currentEntityId: Entity = 0;
 
   public update(): void {
-    for (const [system, entities] of this.systems.entries()) {
-      system.update(entities);
-    }
-
-    while (this.entitiesToRemove.length > 0) {
-      const entityToRemove: Entity | undefined = this.entitiesToRemove.pop();
-      if(entityToRemove !== undefined) {
-          this.removeEntityFromSystems(entityToRemove);
-      }
-    }
+    this.updateSystems();
+    this.purgeComponents();
+    this.purgeEntities();
   }
 
   public addEntity(): Entity {
@@ -59,6 +53,14 @@ export default class GameLoop {
     return;
   }
 
+  public setComponentOfEntityForRemoval(component: Function, entity: Entity): void {
+    if(this.componentsToRemoveFromEntities.has(entity) === false) {
+      this.componentsToRemoveFromEntities.set(entity, new Set([]));
+    }
+
+    this.componentsToRemoveFromEntities.get(entity)?.add(component);
+  }
+
   public entityHasAllComponents(entity: Entity, components: Set<Function>): boolean {
     if(this.entities.get(entity) === undefined) {
       return false;
@@ -92,12 +94,6 @@ export default class GameLoop {
     return this.entities.get(entity)?.get(component);
   }  
 
-  public removeComponentFromEntity(component: Function, entity: Entity): void {
-    this.entities.get(entity)?.delete(component);
-    
-    this.manageEntityForSystems(entity);
-    return;
-  }
 
   public addSystem(systemToAdd: AbstractSystem): void {
 
@@ -153,6 +149,13 @@ export default class GameLoop {
     return;
   }
 
+
+  private updateSystems(): void {
+    for (const [system, entities] of this.systems.entries()) {
+      system.update(entities);
+    }
+  }
+
   private manageEntityForSystems(entity: Entity): void {
     for (const system of this.systems.keys()) {
       if(this.entityHasAllComponents(entity, system.requiredComponents) === false) {
@@ -170,6 +173,37 @@ export default class GameLoop {
       
       this.systems.get(system)?.add(entity);
     }
+  }
+
+  private purgeComponents(): void {
+    while(this.componentsToRemoveFromEntities.size > 0) {
+      for(const entity of this.componentsToRemoveFromEntities.keys()) {
+        while(this.componentsToRemoveFromEntities.get(entity)?.size > 0) {
+          this.componentsToRemoveFromEntities.get(entity)?.forEach((component: Function) => {
+            this.removeComponentFromEntity(component, entity);
+            this.componentsToRemoveFromEntities.get(entity)?.delete(component);
+          })
+        }
+        this.componentsToRemoveFromEntities.delete(entity);
+      }
+    }
+  }
+  
+  public removeComponentFromEntity(component: Function, entity: Entity): void {
+    this.entities.get(entity)?.delete(component);
+    
+    this.manageEntityForSystems(entity);
+    return;
+  }
+
+  private purgeEntities(): void {
+    while (this.entitiesToRemove.length > 0) {
+      const entityToRemove: Entity | undefined = this.entitiesToRemove.pop();
+      if(entityToRemove !== undefined) {
+          this.removeEntityFromSystems(entityToRemove);
+      }
+    }
+    
   }
   
   private removeEntityFromSystems(entity: Entity): void {

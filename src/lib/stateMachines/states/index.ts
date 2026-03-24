@@ -2,6 +2,8 @@ export type State =
 'Idle' |
 'Loading' |
 'Lost' |
+'Won' |
+'Fighting' |
 'MainMenu' |
 'Paused' |
 'Playing' |

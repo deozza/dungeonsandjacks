@@ -6,7 +6,7 @@
     "content": "He took an oath"
   },
   "HealthComponent": {
-    "maxHealth": "120"
+    "maxHealth": 120
   },
   "DeckComponent": {
     "cards": {

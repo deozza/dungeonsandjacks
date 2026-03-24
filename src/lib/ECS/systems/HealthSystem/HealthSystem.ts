@@ -30,12 +30,12 @@ export default class HealthSystem extends AbstractSystem {
       
       if(healthVariationComponent instanceof DamageComponent){
         healthComponent.currentHealth = this.reduceHealth(healthVariationComponent, healthComponent);
-        this.gameLoop?.removeComponentFromEntity(DamageComponent, entity);
+        this.gameLoop?.setComponentOfEntityForRemoval(DamageComponent, entity);
       }
 
       if(healthVariationComponent instanceof HealComponent){
         healthComponent.currentHealth = this.addHealth(healthVariationComponent, healthComponent);
-        this.gameLoop?.removeComponentFromEntity(HealComponent, entity);
+        this.gameLoop?.setComponentOfEntityForRemoval(HealComponent, entity);
       }
     }
 

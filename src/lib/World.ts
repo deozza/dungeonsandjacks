@@ -3,11 +3,15 @@ import LoadedScenesComponent from "./ECS/components/LoadedScenesComponent";
 import SceneComponent from "./ECS/components/SceneComponent";
 import StateMachineComponent from "./ECS/components/StateMachineComponent";
 import type { Entity } from "./ECS/entities";
+import CardMovementSystem from "./ECS/systems/CardMovementSystem/CardMovementSystem";
+import HandSystem from "./ECS/systems/HandSystem/HandSystem";
+import RoundSystem from "./ECS/systems/RoundSystem/RoundSystem";
 import SceneSystem from "./ECS/systems/SceneSystem/SceneSystem";
+import StateMachineShiftSystem from "./ECS/systems/StateMachineShiftSystem/StateMachineShiftSystem";
 import StateMachineSystem from "./ECS/systems/StateMachineSystem/StateMachineSystem";
 import GameLoop from "./gameLoop/GameLoop";
 import { characterSelectSceneConstraints, mainMenuSceneConstraints, pauseSceneConstraints, playSceneConstraints, splashSceneConstraints } from "./scenes";
-import { gameStateMachine, runStateMachine } from "./stateMachines/stateMachines";
+import { gameStateMachine, roundStateMachine, runStateMachine } from "./stateMachines/stateMachines";
 
 export default class World {
   #gameLoop: GameLoop | undefined = undefined;
@@ -36,6 +40,13 @@ export default class World {
 
     this.gameLoop?.addComponentToEntity(new StateMachineComponent(runStateMachine), runStateMachineEntity);
     this.gameLoop?.addComponentToEntity(new CurrentStateComponent('Idle'), runStateMachineEntity);
+    
+    const roundStateMachineEntity: Entity = this.gameLoop!.addEntity();
+
+    this.gameLoop?.addComponentToEntity(new StateMachineComponent(roundStateMachine), roundStateMachineEntity);
+    this.gameLoop?.addComponentToEntity(new CurrentStateComponent('Idle'), roundStateMachineEntity);
+
+    this.gameLoop?.addSystem(new StateMachineShiftSystem());
   }
 
   private loadScenes(): void {
@@ -61,5 +72,8 @@ export default class World {
     this.#gameLoop = new GameLoop();
     this.loadStateMachines();
     this.loadScenes();
+    this.#gameLoop.addSystem(new RoundSystem());
+    this.#gameLoop.addSystem(new CardMovementSystem());
+    this.#gameLoop.addSystem(new HandSystem());
   }
 }

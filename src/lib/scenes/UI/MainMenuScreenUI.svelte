@@ -15,5 +15,7 @@
   
 </script>
 
-<h1 class="h1">Main menu</h1>
-<button onclick={handleClick}>Play</button>
+<div class="w-full h-full flex flex-col items-center justify-center space-y-8">
+	<h1 class="h1">Main menu</h1>
+	<button onclick={handleClick} class="btn btn-lg preset-outlined-primary-500 hover:preset-filled-primary-500" >New game</button>
+</div>

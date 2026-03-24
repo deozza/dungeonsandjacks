@@ -6,7 +6,7 @@
     "content": "A master of the arcanes"
   },
   "HealthComponent": {
-    "maxHealth": "80"
+    "maxHealth": 80
   },
   "DeckComponent": {
     "cards": {

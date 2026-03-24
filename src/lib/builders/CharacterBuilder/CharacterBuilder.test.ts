@@ -1,6 +1,6 @@
 import GameLoop from "$lib/gameLoop/GameLoop";
 import { describe, expect, it, vi } from "vitest";
-import PlayerBuilder from "./PlayerBuilder";
+import CharacterBuilder from "./CharacterBuilder";
 import type { Entity } from "$lib/ECS/entities";
 import DiscardComponent from "$lib/ECS/components/DiscardComponent";
 import HandComponent from "$lib/ECS/components/HandComponent";
@@ -33,14 +33,14 @@ const values = {
 describe('buildNameComponent', () => {
   it('adds NameComponent to entity according to values', () => {
     const gameLoop: GameLoop = new GameLoop();
-    const playerBuilder: PlayerBuilder = new PlayerBuilder();
-    playerBuilder.gameLoop = gameLoop;
+    const characterBuilder: CharacterBuilder = new CharacterBuilder();
+    characterBuilder.gameLoop = gameLoop;
     
     const playerEntity: Entity = gameLoop.addEntity();
 
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(0);
     
-    playerBuilder['buildNameComponent'](values, playerEntity);
+    characterBuilder['buildNameComponent'](values, playerEntity);
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(1);
     expect(gameLoop.entityHasAllComponents(playerEntity, new Set<Function>([NameComponent])));
@@ -51,14 +51,14 @@ describe('buildNameComponent', () => {
 describe('buildDescriptionComponent', () => {
   it('adds DescriptionComponent to entity according to values', () => {
     const gameLoop: GameLoop = new GameLoop();
-    const playerBuilder: PlayerBuilder = new PlayerBuilder();
-    playerBuilder.gameLoop = gameLoop;
+    const characterBuilder: CharacterBuilder = new CharacterBuilder();
+    characterBuilder.gameLoop = gameLoop;
     
     const playerEntity: Entity = gameLoop.addEntity();
 
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(0);
     
-    playerBuilder['buildDescriptionComponent'](values, playerEntity);
+    characterBuilder['buildDescriptionComponent'](values, playerEntity);
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(1);
     expect(gameLoop.entityHasAllComponents(playerEntity, new Set<Function>([DescriptionComponent])));
@@ -69,14 +69,14 @@ describe('buildDescriptionComponent', () => {
 describe('buildHealthComponent', () => {
   it('adds HealthComponent to entity according to values', () => {
     const gameLoop: GameLoop = new GameLoop();
-    const playerBuilder: PlayerBuilder = new PlayerBuilder();
-    playerBuilder.gameLoop = gameLoop;
+    const characterBuilder: CharacterBuilder = new CharacterBuilder();
+    characterBuilder.gameLoop = gameLoop;
 
     const playerEntity: Entity = gameLoop.addEntity();
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(0);
     
-    playerBuilder['buildHealthComponent'](values, playerEntity);
+    characterBuilder['buildHealthComponent'](values, playerEntity);
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(1);
     expect(gameLoop.entityHasAllComponents(playerEntity, new Set<Function>([HealthComponent])));
@@ -88,14 +88,14 @@ describe('buildHealthComponent', () => {
 describe('buildDeckComponent', () => {
   it('adds DeckComponent to entity according to values', () => {
     const gameLoop: GameLoop = new GameLoop();
-    const playerBuilder: PlayerBuilder = new PlayerBuilder();
-    playerBuilder.gameLoop = gameLoop;
+    const characterBuilder: CharacterBuilder = new CharacterBuilder();
+    characterBuilder.gameLoop = gameLoop;
     
     const playerEntity: Entity = gameLoop.addEntity();
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(0);
     
-    playerBuilder['buildDeckComponent'](values, playerEntity);
+    characterBuilder['buildDeckComponent'](values, playerEntity);
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(1);
     expect(gameLoop.entityHasAllComponents(playerEntity, new Set<Function>([DeckComponent])));
@@ -109,14 +109,14 @@ describe('buildDeckComponent', () => {
 describe('buildHandComponent', () => {
   it('adds empty HandComponent', () => {
     const gameLoop: GameLoop = new GameLoop();
-    const playerBuilder: PlayerBuilder = new PlayerBuilder();
-    playerBuilder.gameLoop = gameLoop;
+    const characterBuilder: CharacterBuilder = new CharacterBuilder();
+    characterBuilder.gameLoop = gameLoop;
 
     const playerEntity: Entity = gameLoop.addEntity();
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(0);
     
-    playerBuilder['buildHandComponent'](playerEntity);
+    characterBuilder['buildHandComponent'](playerEntity);
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(1);
     expect(gameLoop.entityHasAllComponents(playerEntity, new Set<Function>([HandComponent])));
@@ -128,14 +128,14 @@ describe('buildHandComponent', () => {
 describe('buildDiscardComponent', () => {
   it('adds empty DiscardComponent', () => {
     const gameLoop: GameLoop = new GameLoop();
-    const playerBuilder: PlayerBuilder = new PlayerBuilder();
-    playerBuilder.gameLoop = gameLoop;
+    const characterBuilder: CharacterBuilder = new CharacterBuilder();
+    characterBuilder.gameLoop = gameLoop;
     
     const playerEntity: Entity = gameLoop.addEntity();
 
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(0);
     
-    playerBuilder['buildDiscardComponent'](playerEntity);
+    characterBuilder['buildDiscardComponent'](playerEntity);
     
     expect(gameLoop.getComponentsFromEntity(playerEntity)?.size).toBe(1);
     expect(gameLoop.entityHasAllComponents(playerEntity, new Set<Function>([DiscardComponent])));
@@ -146,24 +146,24 @@ describe('buildDiscardComponent', () => {
 
 describe('build', () => {
   it('throws if no gameLoop', () => {
-    const playerBuilder: PlayerBuilder = new PlayerBuilder();
+    const characterBuilder: CharacterBuilder = new CharacterBuilder();
 
-    expect(() => playerBuilder.build(values)).toThrow();
+    expect(() => characterBuilder.build(values)).toThrow();
   });
   
   it('calls other methods', () => {
     const gameLoop: GameLoop = new GameLoop();
-    const playerBuilder: PlayerBuilder = new PlayerBuilder();
-    playerBuilder.gameLoop = gameLoop;
+    const characterBuilder: CharacterBuilder = new CharacterBuilder();
+    characterBuilder.gameLoop = gameLoop;
     
-    const buildNameComponentSpy = vi.spyOn(playerBuilder, 'buildNameComponent');
-    const buildDescriptionComponent = vi.spyOn(playerBuilder, 'buildDescriptionComponent');
-    const buildHealthComponent = vi.spyOn(playerBuilder, 'buildHealthComponent');
-    const buildDeckComponent = vi.spyOn(playerBuilder, 'buildDeckComponent');
-    const buildDiscardComponent = vi.spyOn(playerBuilder, 'buildDiscardComponent');
-    const buildHandComponent = vi.spyOn(playerBuilder, 'buildHandComponent');
+    const buildNameComponentSpy = vi.spyOn(characterBuilder, 'buildNameComponent');
+    const buildDescriptionComponent = vi.spyOn(characterBuilder, 'buildDescriptionComponent');
+    const buildHealthComponent = vi.spyOn(characterBuilder, 'buildHealthComponent');
+    const buildDeckComponent = vi.spyOn(characterBuilder, 'buildDeckComponent');
+    const buildDiscardComponent = vi.spyOn(characterBuilder, 'buildDiscardComponent');
+    const buildHandComponent = vi.spyOn(characterBuilder, 'buildHandComponent');
 
-    playerBuilder.build(values);
+    characterBuilder.build(values);
 
     expect(buildNameComponentSpy).toHaveBeenCalledTimes(1);
     expect(buildDescriptionComponent).toHaveBeenCalledTimes(1);

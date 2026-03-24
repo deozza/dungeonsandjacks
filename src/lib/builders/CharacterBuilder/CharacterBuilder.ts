@@ -8,7 +8,7 @@ import type { Entity } from "$lib/ECS/entities";
 import AbstractBuilder from "../AbstractBuilder";
 import CardBuilder from "../CardBuilder/CardBuilder";
 
-type PlayerModel = {
+export type CharacterModel = {
   NameComponent: {
     content: string
   },
@@ -28,61 +28,61 @@ type PlayerModel = {
   }
 };
 
-export default class PlayerBuilder extends AbstractBuilder {
+export default class CharacterBuilder extends AbstractBuilder {
 
-    public static instance: PlayerBuilder | undefined = undefined;
+    public static instance: CharacterBuilder | undefined = undefined;
 
-    public getInstance(): PlayerBuilder {
-      if(PlayerBuilder.instance === undefined) {
-        PlayerBuilder.instance = new PlayerBuilder();
+    public getInstance(): CharacterBuilder {
+      if(CharacterBuilder.instance === undefined) {
+        CharacterBuilder.instance = new CharacterBuilder();
       }
 
-      return PlayerBuilder.instance;
+      return CharacterBuilder.instance;
     }
   
   
-    public build(values: PlayerModel): Entity {
+    public build(values: CharacterModel): Entity {
       if(this.gameLoop === undefined) {
         throw 'gameLoop must be instanciated before using a builder';
       }
       
-      const playerEntity: Entity = this.gameLoop.addEntity();
+      const characterEntity: Entity = this.gameLoop.addEntity();
 
-      this.buildNameComponent(values, playerEntity);
-      this.buildDescriptionComponent(values, playerEntity);
-      this.buildHealthComponent(values, playerEntity);
-      this.buildDeckComponent(values, playerEntity);
-      this.buildHandComponent(playerEntity);
-      this.buildDiscardComponent(playerEntity);
+      this.buildNameComponent(values, characterEntity);
+      this.buildDescriptionComponent(values, characterEntity);
+      this.buildHealthComponent(values, characterEntity);
+      this.buildDeckComponent(values, characterEntity);
+      this.buildHandComponent(characterEntity);
+      this.buildDiscardComponent(characterEntity);
 
-      return playerEntity;
+      return characterEntity;
     }
 
-    private buildNameComponent(values: PlayerModel, playerEntity: Entity): void {
+    private buildNameComponent(values: CharacterModel, characterEntity: Entity): void {
       const nameComponent: NameComponent = new NameComponent();
       nameComponent.content = values.NameComponent.content;
 
-      this.gameLoop?.addComponentToEntity(nameComponent, playerEntity);
+      this.gameLoop?.addComponentToEntity(nameComponent, characterEntity);
     }
 
-    private buildDescriptionComponent(values: PlayerModel, playerEntity: Entity): void {
+    private buildDescriptionComponent(values: CharacterModel, characterEntity: Entity): void {
       const descriptionComponent: DescriptionComponent = new DescriptionComponent();
       descriptionComponent.content = values.DescriptionComponent.content;
 
-      this.gameLoop?.addComponentToEntity(descriptionComponent, playerEntity);
+      this.gameLoop?.addComponentToEntity(descriptionComponent, characterEntity);
       
     }
 
-    private buildHealthComponent(values: PlayerModel, playerEntity: Entity): void {
+    private buildHealthComponent(values: CharacterModel, characterEntity: Entity): void {
       const healthComponent: HealthComponent = new HealthComponent();
       healthComponent.maxHealth = values.HealthComponent.maxHealth;
       healthComponent.currentHealth = healthComponent.maxHealth;
 
-      this.gameLoop?.addComponentToEntity(healthComponent, playerEntity);
+      this.gameLoop?.addComponentToEntity(healthComponent, characterEntity);
       
     }
 
-    private buildDeckComponent(values: PlayerModel, playerEntity: Entity): void {
+    private buildDeckComponent(values: CharacterModel, characterEntity: Entity): void {
       const cardBuilder: CardBuilder = new CardBuilder();
       cardBuilder.gameLoop = this.gameLoop;
       
@@ -95,19 +95,19 @@ export default class PlayerBuilder extends AbstractBuilder {
         }
       }
 
-      this.gameLoop?.addComponentToEntity(deckComponent, playerEntity);
+      this.gameLoop?.addComponentToEntity(deckComponent, characterEntity);
     }
 
-    private buildHandComponent(playerEntity: Entity): void {
+    private buildHandComponent(characterEntity: Entity): void {
       const handComponent: HandComponent = new HandComponent();
       
-      this.gameLoop?.addComponentToEntity(handComponent, playerEntity);
+      this.gameLoop?.addComponentToEntity(handComponent, characterEntity);
     }
 
-    private buildDiscardComponent(playerEntity: Entity): void {
+    private buildDiscardComponent(characterEntity: Entity): void {
       const discardComponent: DiscardComponent = new DiscardComponent();
       
-      this.gameLoop?.addComponentToEntity(discardComponent, playerEntity);
+      this.gameLoop?.addComponentToEntity(discardComponent, characterEntity);
       
     }
 }

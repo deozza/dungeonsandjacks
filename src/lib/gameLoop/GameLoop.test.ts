@@ -297,8 +297,9 @@ describe('entityHasAllComponents', () => {
   });
 });
   
-describe('removeComponentFromEntity', () => {
-  it('removes component from entity', () => {
+
+describe('purgeComponents', () => {
+  it('remove from map', () => {
     const gameLoop: GameLoop = new GameLoop();
     gameLoop['entities'] = new Map<Entity, Map<Function, ComponentInterface>>([
       [0, new Map<Function, ComponentInterface>()],
@@ -317,7 +318,18 @@ describe('removeComponentFromEntity', () => {
       ]
     ]);
 
-    gameLoop.removeComponentFromEntity(DummyComponent, 1);
+    gameLoop.setComponentOfEntityForRemoval(DummyComponent, 1);
+    expect([...gameLoop['entities'].get(1)]).toEqual([
+      [
+        DummyComponent,
+        <DummyComponent>{
+          value: 'Hello World'
+        }
+      ]
+    ]);
+
+    gameLoop['purgeComponents']();
+    
     expect([...gameLoop['entities'].get(1)]).toStrictEqual([]);
   });
 });

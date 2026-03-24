@@ -1,6 +1,7 @@
 import CurrentStateComponent from "$lib/ECS/components/CurrentStateComponent";
 import StateMachineComponent from "$lib/ECS/components/StateMachineComponent";
 import StateMachineEventComponent from "$lib/ECS/components/StateMachineEventComponent";
+import StateMachineShiftComponent from "$lib/ECS/components/StateMachineShiftComponent";
 import type { Entity } from "$lib/ECS/entities";
 import type { State } from "$lib/stateMachines/states";
 import AbstractSystem from "../AbstractSystem";
@@ -28,7 +29,8 @@ export default class StateMachineSystem extends AbstractSystem {
       if(nextState === undefined) {
         return;
       }
-
+      
+      this.addStateMachineShiftComponent(entity, nextState);
       this.applyNextState(entity, nextState);
   }
 
@@ -36,6 +38,10 @@ export default class StateMachineSystem extends AbstractSystem {
     this.getCurrentStateComponent(entity).currentState = nextState;
   }
 
+  private addStateMachineShiftComponent(entity: Entity, nextState: State): void {
+    const stateMachineShiftComponent: StateMachineShiftComponent = new StateMachineShiftComponent(this.getCurrentStateComponent(entity).currentState, nextState);
+    this.gameLoop?.addComponentToEntity(stateMachineShiftComponent, entity);
+  }
 
   private getNextState(entity: Entity): State | undefined {
     return this.getStateMachineComponent(entity)
